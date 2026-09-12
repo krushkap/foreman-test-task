@@ -1,0 +1,16 @@
+<%#
+kind: snippet
+name: Custom_NTP_setup
+model: ProvisioningTemplate
+%>
+echo "=== Configuring NTP via Foreman Provisioning Template ==="
+dnf install -y chrony
+cat << 'CHRONY_CONF' > /etc/chrony.conf
+pool pool.ntp.org iburst
+driftfile /var/lib/chrony/drift
+makestep 1.0 3
+rtcsync
+CHRONY_CONF
+systemctl enable --now chronyd
+systemctl restart chronyd
+echo "NTP setup complete at $(date)" >> /root/ntp_setup.log
